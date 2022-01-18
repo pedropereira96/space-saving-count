@@ -3,4 +3,4 @@
 #Requirements
 You need to install the requirements with pip:
 
-````pip install -r requirements.txt```
+````pip install -r requirements.txt````

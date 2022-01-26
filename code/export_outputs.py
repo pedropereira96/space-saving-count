@@ -1,47 +1,38 @@
 
+from collections import defaultdict
 import matplotlib.pyplot as plt
 import numpy as np
-
 import pandas as pd
 
 
-
-##Funçao para receber ficheiros e exportalos
 class export():
-    def __init__(self, exact_counter, space_saving, ammount_of_words, k):
+    def __init__(self):
+        self.exact_counter = defaultdict(int)
+        self.space_saving = defaultdict(int)
+        self.ammount_of_words = 0
+        self.k = 0
+
+    def update(self, exact_counter, space_saving, ammount_of_words, k):
+        """ New Constructor """
         self.exact_counter = exact_counter
         self.space_saving = space_saving
         self.ammount_of_words = ammount_of_words
         self.k = k
 
-    def csv(self):
-        pass
-
-    def group_bar_chart(self):
+    def line_chart(self, words, space_save, exact, k):
+        """Create line chart and save figure in the content/output folder, with name 'line_chart_(k value).png'"""
         plt.clf()
-
-        #sort space saving by counter
-        self.space_saving = dict(sorted(self.space_saving.items(),key=lambda item:item[1],reverse=True))
-        
-        labels = list(self.space_saving.keys())
-        Position = list(range(len(self.space_saving)))
-        #exact counter
-        exact_counter = []
-        for i in self.space_saving.keys():
-            exact_counter.append(self.exact_counter[i])
-        
-        # space saving counter
-        space_saving_counter = []
-        for i in self.space_saving.keys():
-            space_saving_counter.append(self.space_saving[i])
-
-        plt.figure(figsize=(20, 5))
-        plt.subplots_adjust(bottom=0.3)
-        ssp = plt.plot(Position, space_saving_counter,'o',color='green', label="Space Saving Count")
-        plt.ylabel('Space Saving Counter')
-        plt.xticks(Position, labels,rotation=90)
-        exc = plt.plot(Position, exact_counter, 'o', color='blue', label="Exact ounter")
-        plt.xlabel('Words')
-        plt.title('Space Saving Counter (green bar)  Exact counte (blue point) k=' + str(self.k))
-        plt.savefig("content/output/"+str(self.k)+".png")
+        fig, ax = plt.subplots()
+        ax.plot(range(len(words)), space_save, label="Space Save")
+        ax.plot(range(len(words)), exact, label="Exact")
+        ax.legend()
+        plt.xlabel('Words Rank')
+        plt.ylabel('Counter')
+        plt.title("Most frequent {} words".format(k))
+        plt.savefig("content/output/lines_chart_"+str(self.k)+".png")
         #plt.show()
+
+    def to_excel(self, lista, k):
+        """Create excel file and save in the content/output folder, with name 'counters_results_(k value).xlsx'"""
+        df2 = pd.DataFrame(np.array(lista), columns=['Words', 'Space Saving Count', 'Exact Count', 'Different', 'Exact counter percent in space save counter'])
+        df2.to_excel("content/output/counters_results_"+str(k)+".xlsx")

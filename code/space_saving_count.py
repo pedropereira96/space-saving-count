@@ -17,11 +17,11 @@ class counter():
         self.ammount_of_words=0
 
     def read_file(self):
+        """ Read text file and do exact counter"""
         stops = []
         with open("content/texts/stopwords.txt",'r') as stop: 
             for word in stop: 
                 stops.append(word.replace("\n",''))
-        print(stops)
 
         with open(self.file_path,'r') as file:  
             for line in file:       
@@ -35,6 +35,7 @@ class counter():
 
     
     def space_saving_counter(self, k):
+        """ Space saving counter """
         counters = {}                   
         for word in self.words:            
             if word in counters:        
@@ -45,7 +46,14 @@ class counter():
                 min_counter = min(counters, key=counters.get)       
                 counters[word] = counters.pop(min_counter) + 1      
         self.space_saving_count = counters
+        self.space_saving_count = dict(sorted(self.space_saving_count.items(),key=lambda item:item[1],reverse=True))
 
     def clean_word(self, word):
-        return re.sub('[^A-Za-z]+', '', word).lower()
+        word = re.sub("[^A-Za-z']+", '', word).lower()
+
+        #To remove Genitive Case, when word has ('s) 
+        if word[-2:] == "'s":
+            word=word[:-2]
+
+        return word
 
